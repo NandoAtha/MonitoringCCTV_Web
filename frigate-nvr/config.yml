@@ -1,0 +1,17 @@
+mqtt:
+  enabled: False
+
+cameras:
+  depan:
+    ffmpeg:
+      inputs:
+        - path: rtsp://user:pass@ip-kamera:554/stream1
+          roles:
+            - detect
+            - rtmp
+    detect:
+      width: 1280
+      height: 720
+      fps: 5
+    record:
+      enabled: true

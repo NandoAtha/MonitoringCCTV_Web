@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  frigate:
+    container_name: frigate
+    image: ghcr.io/blakeblackshear/frigate:stable
+    privileged: true
+    restart: unless-stopped
+    shm_size: "64mb"
+    ports:
+      - "5000:5000"  # Web UI + HLS
+    volumes:
+      - ./config.yml:/config/config.yml
+      - ./media:/media/frigate
+      - type: tmpfs
+        target: /tmp/cache
