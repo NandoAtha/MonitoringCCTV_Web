@@ -40,7 +40,7 @@
                             <button class="btn btn-outline-light btn-sm" onclick="changeLayout(event, 1)">
                                 <i class="fas fa-square"></i>
                             </button>
-                            <button class="btn btn-primary btn-sm active" onclick="changeLayout(event, 4)">
+                            <button class="btn btn-primary btn-sm" onclick="changeLayout(event, 4)">
                                 <i class="fas fa-th-large"></i>
                             </button>
                             <button class="btn btn-outline-light btn-sm" onclick="changeLayout(event, 9)">
@@ -360,6 +360,7 @@
                 setTimeout(() => playStream(i), i * 500); // Stagger the connections
             }
         });
+        changeLayout(null, currentLayout);
     });
 
     function playStream(index) {
@@ -486,19 +487,24 @@
     function changeLayout(event, layout) {
         currentLayout = layout;
         const videoItems = document.querySelectorAll('.video-item');
-        const buttons = document.querySelectorAll('.control-buttons .btn-group .btn');
-        
-        // Update button states
+        const buttons = document.querySelectorAll('.control-buttons .btn-group .btn, .control-buttons .btn-group > .btn');
+
         buttons.forEach(btn => btn.classList.remove('btn-primary', 'active'));
         buttons.forEach(btn => btn.classList.add('btn-outline-light'));
 
-        const clickedButton = event.target.closest('button');
-        clickedButton.classList.remove('btn-outline-light');
-        clickedButton.classList.add('btn-primary', 'active');
-        
-        // Change grid layout
+        if (event) { 
+            const clickedButton = event.target.closest('button');
+            clickedButton.classList.remove('btn-outline-light');
+            clickedButton.classList.add('btn-primary', 'active');
+        } else {
+            const defaultBtn = document.querySelector(`.btn-group button[onclick*="${layout}"]`);
+            if (defaultBtn) {
+                defaultBtn.classList.remove('btn-outline-light');
+                defaultBtn.classList.add('btn-primary', 'active');
+            }
+        }
+
         videoItems.forEach(item => {
-            // Hapus semua kelas kolom yang ada untuk layout
             item.className = item.className.replace(/\bcol-lg-\d+\b/g, '').trim();
             item.classList.remove('col-md-6');
 

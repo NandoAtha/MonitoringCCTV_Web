@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="main-container bg-dark">
+<div class="bg-dark vh-100 d-flex flex-column">
 
 {{-- NAVBAR --}}
 
@@ -15,7 +15,7 @@
         <div class="col-lg-8 mx-auto">
             <div class="card theme-card bg-dark-subtle border-secondary text-white">
                 <div class="card-header theme-card-header bg-secondary text-white">
-                    <h5 class="mb-0 fw-semibold"><i class="fas fa-cogs me-2"></i>General Settings</h5>
+                    <h5 class="mb-0 fw-semibold"><i class="fas fa-cogs me-2 mr-2"></i>General Settings</h5>
                 </div>
                 <div class="card-body">
                     <ul class="list-group list-group-flush">
