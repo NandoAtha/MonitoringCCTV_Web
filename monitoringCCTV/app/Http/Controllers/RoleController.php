@@ -35,4 +35,12 @@ class RoleController extends Controller
 
         return redirect()->back()->with('success', 'Role berhasil diperbarui!');
     }
+
+    public function destroy($id)
+    {
+        $role = Role::findOrFail($id);
+        $role->delete();
+
+        return redirect()->back()->with('success', 'Role berhasil dihapus!');
+    }
 }
