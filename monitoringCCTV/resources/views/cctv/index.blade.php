@@ -8,6 +8,19 @@
     
     <div class="row mb-4">
         <div class="col-12">
+             @php
+        $testCam = [
+            'name' => 'Test Camera (M3U8 Demo)',
+            'ip' => 'test-streams.mux.dev',
+            'port' => '',
+            'type' => 'Demo',
+            'online' => true,
+            'stream_url' => 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'
+        ];
+
+        // Tambahkan testCam ke array cameras
+        $cameras[] = $testCam;
+    @endphp
             <div class="control-panel bg-dark-subtle rounded-3 p-3 shadow-sm">
                 <div class="d-flex justify-content-between align-items-center flex-wrap">
                     <div class="d-flex align-items-center gap-3">

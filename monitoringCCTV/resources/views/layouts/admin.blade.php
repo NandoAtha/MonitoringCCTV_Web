@@ -167,7 +167,7 @@
                             @endcan
                         </div>
 
-                        <div class="nav-tab-col">
+                        {{-- <div class="nav-tab-col">
                             @can('view_logs')
                             <a href="{{ route('logs') }}" class="text-decoration-none d-block">
                                 <div class="nav-item p-3 {{ request()->routeIs('logs') ? 'active-tab' : '' }} d-flex flex-column align-items-center">
@@ -176,7 +176,7 @@
                                 </div>
                             </a>
                             @endcan
-                        </div>
+                        </div> --}}
 
                         <div class="nav-tab-col">
                             @can('manage_users')
