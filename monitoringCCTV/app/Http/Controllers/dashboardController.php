@@ -31,6 +31,18 @@ class dashboardController extends Controller
                 'ip' => '192.168.1.12',
                 'online' => false,
                 'stream_url' => 'http://localhost:7001/live/kamera3/index.m3u8'
+            ],
+            [
+                'name' => 'Kamera 4',
+                'ip' => '192.168.1.12',
+                'online' => false,
+                'stream_url' => 'http://localhost:7001/live/kamera3/index.m3u8'
+            ],
+            [
+                'name' => 'Kamera 5',
+                'ip' => '192.168.1.12',
+                'online' => false,
+                'stream_url' => 'http://localhost:7001/live/kamera3/index.m3u8'
             ]
         ];
 

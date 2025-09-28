@@ -9,15 +9,18 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 Route::get('/', function () {
-    return redirect()->route('login');
+    return view('landing'); 
 });
 
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::middleware('guest')->group(function () {
+    // Rute Login
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+});
+
 
 Route::middleware(['auth'])->group(function () {
-
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [App\Http\Controllers\dashboardController::class, 'index'])->name('cctv.index')->middleware('auth');
     Route::get('/playback', [dashboardController::class, 'playback'])->name('playback');
     Route::get('/settings', [dashboardController::class, 'settings'])->name('settings');
