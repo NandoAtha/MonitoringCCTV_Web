@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DeviceManager version="2.0">
+	<Device name="CC Cam Depan" domain="172.16.92.207" port="37777" username="commandcenter" password="nnpw2lt48vx4INlUVo+hR6T4o2JqrnkxWtb5timDB6RSGQfjen5JwMty" protocol="1" connect="0" />
+	<Device name="CC Cam Belakang" domain="172.16.92.247" port="37777" username="commandcenter" password="WU2PmxofnaoXBNYTKpqi4Tn8bNYm6FKWHU6HwxRS0tf84Q8bpaCZKf4A" protocol="1" connect="0" />
+	<Device name="CC Pintu Masuk" domain="172.16.92.249" port="37777" username="commandcenter" password="GIZBAN2PwTD2+oJw/hDofcFMxlzkJC61+LX7IZFTkaesbl4o5CEgwyN7" protocol="1" connect="0" />
+	<Device name="MPP" domain="6J0D508PAZAB21F" port="37777" username="commandcenter" password="/2DUjc7HQlbQgHLv9xZJ175gsphjwCUrytUUY1ysgBEoVXm1aRgRg2Tw" protocol="1" connect="19" />
+	<Device name="Kecamatan Dampit" domain="6J0D4BCPAZ810FE" port="37777" username="commandcenter" password="7+oARoQ0ztDEoa20r9NB00jvP6KdBhCRYUyJuqmi1+Sujq/vKupTBsBO" protocol="1" connect="19" />
+	<Device name="Kecamatan Poncokusumo" domain="3K00716PAP3FB8A" port="37777" username="commandcenter" password="LtMaGOUmdzH+UBVPhlPyWlDG731MzfFA/u5Dpu7mgbx6eAcQG1nvQvvJ" protocol="1" connect="19" />
+	<Device name="sitiarjo" domain="36.88.108.171" port="554" username="admin" password="4qY9ZSdjpzVqs9Yyo7kx7pbbHNRVLsEDRJeohFxA6YHnr750qvXcy1k2" protocol="1" connect="0" />
+	<Device name="kominfo" domain="7H0B356PAZ0E7AA" port="37777" username="KadisKominfo" password="yyg0hNCSYXqHGmz68hc/YbpwBljMRT03Yj1PBRpANZIfVWqsBz0eD3mG" protocol="1" connect="19" />
+	<Device name="pos 3 mlg" domain="7H0B356PAZ8A646" port="37777" username="admin" password="1jJoh59FevaRdmfyB8Jq3W/meTkOyiY74PKRz7DHG9ZS62CHSGEwDFeKEdI3" protocol="1" connect="19" />
+	<Device name="pos 2 mlg" domain="7H0B356PAZ6C98C" port="37777" username="admin" password="m5OZS08OHSZEWibKNaG2EhOwuEElJQyYdhaejHQ029QhPeb1CLbgomkDVJQB" protocol="1" connect="19" />
+	<Device name="pos 1 mlg" domain="7H0B356PAZE17EE" port="37777" username="admin" password="1C8YgkxHA9qFFNuJCix+ll/nPe9e+eBo3iAB6hHZCLwSMQHFQ7SoKSMH8NWi" protocol="1" connect="19" />
+	<Device name="pos masuk kpj" domain="7H0B356PAZ6A2BF" port="37777" username="admin" password="4Yo3NnLjCExy0A8XHpiDCgSdgVNtKwIaVLYnLV8kuxFuvd4+5EgKtfzDn0E2" protocol="1" connect="19" />
+	<Device name="parkiran kpj" domain="7H0B356PAZ8ADBA" port="37777" username="admin" password="GhoLM0iXlxizksVAzKe+loOKtkI/PL8U/ANqYQrE18bjeXA79HQ1a6VidlOH" protocol="1" connect="19" />
+</DeviceManager>

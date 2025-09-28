@@ -2,4 +2,4 @@
 !private/
 !public/
 !.gitignore
-!cctc_devices.xml
+!cctv_devices.xml
