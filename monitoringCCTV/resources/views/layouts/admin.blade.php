@@ -203,6 +203,18 @@
 
                     </div>
 
+                    <div class="col">
+                            @can('manage_accounts')
+                            <a href="{{ route('cctv.accounts') }}" class="text-decoration-none d-block">
+                                <div class="nav-item p-3 {{ request()->routeIs('cctv.accounts') ? 'active-tab' : '' }}">
+                                    <i class="fas fa-users fa-lg mb-2 {{ request()->routeIs('cctv.accounts') ? 'text-primary' : 'text-muted' }}"></i>
+                                    <h6 class="mb-0 fw-semibold {{ request()->routeIs('cctv.accounts') ? 'text-white' : 'text-muted' }}">Accounts</h6>
+                                </div>
+                            </a>
+                            @endcan
+                        </div>
+                    </div>
+
                 </div>
             </div>
 

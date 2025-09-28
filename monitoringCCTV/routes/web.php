@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\dashboardController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\AccountController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -34,4 +35,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
     Route::post('/roles/{id}', [RoleController::class, 'update'])->name('roles.update');
     Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
+
+    Route::get('/accounts', [AccountController::class, 'index'])->name('accounts.index');
+    // Alias for compatibility with 'cctv.accounts' route name
+    Route::get('/accounts', [AccountController::class, 'index'])->name('cctv.accounts');
+    Route::post('/accounts/store', [AccountController::class, 'store'])->name('accounts.store');
+    Route::post('/accounts/update', [AccountController::class, 'update'])->name('accounts.update');
+    Route::delete('/accounts/{id}', [AccountController::class, 'destroy'])->name('accounts.destroy');
+
+
+
 });
