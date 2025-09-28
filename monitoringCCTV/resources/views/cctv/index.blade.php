@@ -5,19 +5,7 @@
 @section('content')
 
 <div class="container-fluid">
-    @php
-        $testCam = [
-            'name' => 'Test Camera (M3U8 Demo)',
-            'ip' => 'test-streams.mux.dev',
-            'port' => '',
-            'type' => 'Demo',
-            'online' => true,
-            'stream_url' => 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'
-        ];
-
-        // Tambahkan testCam ke array cameras
-        $cameras[] = $testCam;
-    @endphp
+    
     <div class="row mb-4">
         <div class="col-12">
             <div class="control-panel bg-dark-subtle rounded-3 p-3 shadow-sm">
@@ -102,19 +90,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @php
-                                $testCam = [
-                                    'name' => 'Test Camera (M3U8 Demo)',
-                                    'ip' => 'test-streams.mux.dev',
-                                    'port' => '',
-                                    'type' => 'Demo',
-                                    'online' => true,
-                                    'stream_url' => 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'
-                                ];
-
-                                // Tambahkan testCam ke array cameras
-                                $cameras[] = $testCam;
-                            @endphp
                                 @forelse($cameras as $index => $cam)
                                 <tr id="cam-row-{{ $index }}">
                                     <td class="text-center fw-semibold text-white">{{ $index + 1 }}</td>
