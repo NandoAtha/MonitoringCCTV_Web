@@ -29,27 +29,40 @@
             border-radius: 2px;
         }
 
+        /* --- PERBAIKAN HOVER START --- */
+        /* Menambahkan transisi ke nav-item untuk efek halus */
+        .nav-item {
+            transition: background-color 0.2s, color 0.2s;
+            border-radius: 10px;
+        }
+        
+        /* Gaya hover untuk tab yang TIDAK aktif */
+        .nav-item:not(.active-tab):hover {
+            background-color: rgba(255, 255, 255, 0.05); /* Latar belakang hover yang sangat subtle */
+        }
+
+        /* Mengubah warna ikon dan teks yang 'muted' menjadi putih/terang saat hover */
+        .nav-item:not(.active-tab):hover i.text-muted,
+        .nav-item:not(.active-tab):hover h6.text-muted {
+            color: #f8f9fa !important; /* Warna putih */
+        }
+        /* --- PERBAIKAN HOVER END --- */
+
         /* Kelas kustom untuk responsivitas */
         .header-logo {
             max-height: 150px;
-            /* Batasan default */
         }
 
         /* Navigasi Tabs: Memastikan tab berderet dan otomatis jika ada penambahan */
         .nav-tabs-row {
-            /* Menggunakan flexbox untuk memastikan item memuat satu baris (desktop) */
             display: flex;
             justify-content: space-around;
-            /* Menyebar ruang secara merata */
             margin: 0 -5px;
-            /* Mengkompensasi padding/margin item */
         }
 
         .nav-tabs-row .nav-tab-col {
             padding: 0 5px;
-            /* Padding samping untuk pemisah visual */
             flex-grow: 1;
-            /* Setiap kolom mengambil ruang yang sama */
         }
 
         /* Media Query untuk Mobile */
@@ -78,20 +91,15 @@
                 display: none;
             }
 
-            /* Pada mobile, paksa tab untuk memiliki lebar yang sama, tetapi sangat ringkas */
             .nav-tabs-row {
                 overflow-x: auto;
-                /* Jika tab terlalu banyak, ia akan bisa di-scroll horizontal */
                 flex-wrap: nowrap;
-                /* Jangan pernah membungkus (agar scroll berfungsi) */
                 justify-content: flex-start;
             }
 
             .nav-tabs-row .nav-tab-col {
-                /* Berikan lebar minimum pada setiap tab */
                 min-width: 80px;
                 flex-shrink: 0;
-                /* Jangan menyusut */
             }
 
             .nav-item {
@@ -166,8 +174,8 @@
                             </a>
                             @endcan
                         </div>
-
-                        {{-- <div class="nav-tab-col">
+                        
+                        <!-- <div class="nav-tab-col">
                             @can('view_logs')
                             <a href="{{ route('logs') }}" class="text-decoration-none d-block">
                                 <div class="nav-item p-3 {{ request()->routeIs('logs') ? 'active-tab' : '' }} d-flex flex-column align-items-center">
@@ -176,24 +184,23 @@
                                 </div>
                             </a>
                             @endcan
-                        </div> --}}
+                        </div> -->
 
                         <div class="nav-tab-col">
                             @can('manage_users')
                             <a href="{{ route('users') }}" class="text-decoration-none d-block">
                                 <div class="nav-item p-3 {{ request()->routeIs('users') ? 'active-tab' : '' }} d-flex flex-column align-items-center">
                                     <i class="fas fa-users fa-lg mb-2 {{ request()->routeIs('users') ? 'text-primary' : 'text-muted' }}"></i>
-                                    <h6 class="mb-0 fw-semibold {{ request()->routeIs('users') ? 'text-white' : 'text-muted' }}">Users</h6>
+                                    <h6 class="mb-0 fw-semibold {{ request()->routeIs('users') ? 'text-white' : 'text-muted' }}">Roles</h6>
                                 </div>
                             </a>
                             @endcan
                         </div>
                         
-                        
-                    <div class="col">
+                        <div class="nav-tab-col"> 
                             @can('manage_accounts')
                             <a href="{{ route('cctv.accounts') }}" class="text-decoration-none d-block">
-                                <div class="nav-item p-3 {{ request()->routeIs('cctv.accounts') ? 'active-tab' : '' }}">
+                                <div class="nav-item p-3 {{ request()->routeIs('cctv.accounts') ? 'active-tab' : '' }} d-flex flex-column align-items-center">
                                     <i class="fas fa-users fa-lg mb-2 {{ request()->routeIs('cctv.accounts') ? 'text-primary' : 'text-muted' }}"></i>
                                     <h6 class="mb-0 fw-semibold {{ request()->routeIs('cctv.accounts') ? 'text-white' : 'text-muted' }}">Accounts</h6>
                                 </div>
@@ -201,11 +208,6 @@
                             @endcan
                         </div>
                     </div>
-
-                    </div>
-
-                    
-
                 </div>
             </div>
 
