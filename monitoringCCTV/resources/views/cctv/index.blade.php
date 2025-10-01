@@ -4,11 +4,23 @@
 
 @section('content')
 
-
-
 <div class="container-fluid">
+    
     <div class="row mb-4">
         <div class="col-12">
+             @php
+        $testCam = [
+            'name' => 'Test Camera (M3U8 Demo)',
+            'ip' => 'test-streams.mux.dev',
+            'port' => '',
+            'type' => 'Demo',
+            'online' => true,
+            'stream_url' => 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'
+        ];
+
+        // Tambahkan testCam ke array cameras
+        $cameras[] = $testCam;
+    @endphp
             <div class="control-panel bg-dark-subtle rounded-3 p-3 shadow-sm">
                 <div class="d-flex justify-content-between align-items-center flex-wrap">
                     <div class="d-flex align-items-center gap-3">
@@ -27,7 +39,17 @@
                             </span>
                         </div>
                     </div>
-                    <div class="control-buttons">
+                    <div class="control-buttons d-flex align-items-center flex-wrap mt-2 mt-md-0">
+                        <div id="camera-select-dropdown" class="me-3" style="display: none;">
+                            <select class="form-select form-select-sm bg-dark text-white border-secondary" 
+                                    onchange="selectSingleCamera(this.value)">
+                                @foreach($cameras as $index => $cam)
+                                    <option value="{{ $index }}" class="bg-dark text-white">
+                                        {{ $cam['name'] }} @if($cam['online'] ?? false) (Online) @else (Offline) @endif
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                         <button class="btn btn-primary btn-sm me-2" onclick="refreshAllStreams()">
                             <i class="fas fa-sync-alt me-1"></i>
                             Refresh All
@@ -37,10 +59,10 @@
                             Stop All
                         </button>
                         <div class="btn-group" role="group">
-                            <button class="btn btn-outline-light btn-sm" onclick="changeLayout(event, 1)">
+                            <button class="btn btn-primary btn-sm" onclick="changeLayout(event, 1)">
                                 <i class="fas fa-square"></i>
                             </button>
-                            <button class="btn btn-primary btn-sm" onclick="changeLayout(event, 4)">
+                            <button class="btn btn-outline-light btn-sm" onclick="changeLayout(event, 4)">
                                 <i class="fas fa-th-large"></i>
                             </button>
                             <button class="btn btn-outline-light btn-sm" onclick="changeLayout(event, 9)">
@@ -82,7 +104,7 @@
                             </thead>
                             <tbody>
                                 @forelse($cameras as $index => $cam)
-                                <tr>
+                                <tr id="cam-row-{{ $index }}">
                                     <td class="text-center fw-semibold text-white">{{ $index + 1 }}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
@@ -138,10 +160,23 @@
             </div>
         </div>
     </div>
-
+    
     <div class="row" id="video-grid">
+        @php
+        $testCam = [
+            'name' => 'Test Camera (M3U8 Demo)',
+            'ip' => 'test-streams.mux.dev',
+            'port' => '',
+            'type' => 'Demo',
+            'online' => true,
+            'stream_url' => 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'
+        ];
+
+        // Tambahkan testCam ke array cameras
+        $cameras[] = $testCam;
+    @endphp
         @foreach($cameras as $index => $cam)
-        <div class="col-lg-3 col-md-6 mb-4 video-item">
+        <div class="col-lg-3 col-md-6 mb-4 video-item" data-camera-index="{{ $index }}" data-online="{{ $cam['online'] ? 'true' : 'false' }}">
             <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100 bg-dark">
                 <div class="card-header bg-secondary border-bottom py-2 px-3">
                     <div class="d-flex justify-content-between align-items-center">
@@ -201,6 +236,7 @@
 </div>
 
 <style>
+    /* ... (CSS Anda yang sudah ada tetap sama) ... */
     :root {
         --primary-color: #0d6efd;
         --secondary-color: #6c757d;
@@ -350,17 +386,26 @@
 <script>
     const hlsInstances = {};
     const cameras = @json($cameras);
-    let currentLayout = 4;
+    let currentLayout = 1; // Default ke 1x1
+    let selectedCameraIndex = 0; // Index kamera yang sedang tampil
+    const videoItems = document.querySelectorAll('.video-item');
+    const cameraSelectDropdown = document.getElementById('camera-select-dropdown');
+    
+    // Inisialisasi: Pilih kamera pertama yang online atau kamera pertama
+    const firstOnlineIndex = cameras.findIndex(cam => cam.online);
+    selectedCameraIndex = firstOnlineIndex !== -1 ? firstOnlineIndex : 0;
+
 
     // Initialize page
     document.addEventListener('DOMContentLoaded', () => {
-        // Auto-play online cameras
-        cameras.forEach((cam, i) => {
-            if (cam.online && cam.stream_url) {
-                setTimeout(() => playStream(i), i * 500); // Stagger the connections
-            }
-        });
-        changeLayout(null, currentLayout);
+        // Set dropdown value based on initial selectedCameraIndex
+        const selectElement = cameraSelectDropdown.querySelector('select');
+        if (selectElement) {
+             selectElement.value = selectedCameraIndex;
+        }
+        
+        // Auto-play the initial selected camera if in 1x1 mode (or all if in default 4-grid)
+        changeLayout(null, 1);
     });
 
     function playStream(index) {
@@ -470,12 +515,19 @@
     }
 
     function refreshAllStreams() {
-        cameras.forEach((cam, i) => {
-            if (cam.online && cam.stream_url) {
-                stopStream(i);
-                setTimeout(() => playStream(i), 100);
-            }
-        });
+        // Hanya refresh yang sedang tampil
+        if (currentLayout === 1) {
+            stopStream(selectedCameraIndex);
+            setTimeout(() => playStream(selectedCameraIndex), 100);
+        } else {
+            cameras.forEach((cam, i) => {
+                // Hanya refresh kamera yang online
+                if (cam.online && cam.stream_url) {
+                    stopStream(i);
+                    setTimeout(() => playStream(i), 100);
+                }
+            });
+        }
     }
 
     function stopAllStreams() {
@@ -484,43 +536,100 @@
         });
     }
 
-    function changeLayout(event, layout) {
-        currentLayout = layout;
-        const videoItems = document.querySelectorAll('.video-item');
-        const buttons = document.querySelectorAll('.control-buttons .btn-group .btn, .control-buttons .btn-group > .btn');
+    function selectSingleCamera(index) {
+        index = parseInt(index);
+        // Hentikan stream kamera lama
+        if (currentLayout === 1) {
+            stopStream(selectedCameraIndex);
+        }
 
+        selectedCameraIndex = index;
+        updateVideoGridVisibility();
+        
+        // Putar stream kamera yang baru dipilih jika online
+        if (cameras[index].online && cameras[index].stream_url) {
+            playStream(index);
+        }
+    }
+
+    function updateVideoGridVisibility() {
+        videoItems.forEach(item => {
+            const index = parseInt(item.dataset.cameraIndex);
+            const isSelected = index === selectedCameraIndex;
+
+            // Atur class col-* untuk grid
+            item.className = item.className.replace(/\bcol-lg-\d+\b/g, '').trim();
+            item.classList.remove('col-md-6', 'd-none'); // Bersihkan d-none sebelum penentuan
+
+            switch(currentLayout) {
+                case 1:
+                    item.classList.add('col-lg-12', 'col-md-12');
+                    if (isSelected) {
+                        item.classList.remove('d-none');
+                    } else {
+                        item.classList.add('d-none');
+                    }
+                    break;
+                case 4:
+                    item.classList.add('col-lg-6', 'col-md-6');
+                    item.classList.remove('d-none');
+                    break;
+                case 9:
+                    item.classList.add('col-lg-4', 'col-md-6');
+                    item.classList.remove('d-none');
+                    break;
+            }
+        });
+    }
+
+    function changeLayout(event, layout) {
+        // Hentikan semua stream saat berganti layout (opsional, tapi disarankan)
+        stopAllStreams();
+
+        currentLayout = layout;
+        const buttons = document.querySelectorAll('.control-buttons .btn-group .btn');
+        
         buttons.forEach(btn => btn.classList.remove('btn-primary', 'active'));
         buttons.forEach(btn => btn.classList.add('btn-outline-light'));
-
+        
+        // Tandai tombol layout yang aktif
         if (event) { 
             const clickedButton = event.target.closest('button');
             clickedButton.classList.remove('btn-outline-light');
             clickedButton.classList.add('btn-primary', 'active');
         } else {
-            const defaultBtn = document.querySelector(`.btn-group button[onclick*="${layout}"]`);
+            // Untuk inisialisasi
+            const defaultBtn = document.querySelector(`.btn-group button[onclick*="changeLayout(event, ${layout})"]`);
             if (defaultBtn) {
                 defaultBtn.classList.remove('btn-outline-light');
                 defaultBtn.classList.add('btn-primary', 'active');
             }
         }
-
-        videoItems.forEach(item => {
-            item.className = item.className.replace(/\bcol-lg-\d+\b/g, '').trim();
-            item.classList.remove('col-md-6');
-
-            switch(layout) {
-                case 1:
-                    item.classList.add('col-lg-12', 'col-md-12');
-                    break;
-                case 4:
-                    item.classList.add('col-lg-6', 'col-md-6');
-                    break;
-                case 9:
-                    item.classList.add('col-lg-4', 'col-md-6');
-                    break;
+        
+        // Tampilkan/sembunyikan dropdown pemilihan kamera
+        if (layout === 1) {
+            cameraSelectDropdown.style.display = 'block';
+            
+            // Putar stream kamera yang dipilih saat masuk mode 1x1
+            if (cameras[selectedCameraIndex].online && cameras[selectedCameraIndex].stream_url) {
+                 playStream(selectedCameraIndex);
             }
-        });
+        } else {
+            cameraSelectDropdown.style.display = 'none';
+
+            // Putar semua stream kamera yang online saat masuk mode >1x1
+            cameras.forEach((cam, i) => {
+                 if (cam.online && cam.stream_url) {
+                    // Stagger the connection
+                    setTimeout(() => playStream(i), i * 500); 
+                 }
+            });
+        }
+
+        // Atur visibilitas dan ukuran grid
+        updateVideoGridVisibility();
     }
+
 
     function fullscreenVideo(index) {
         const video = document.getElementById(`video${index}`);
@@ -544,7 +653,7 @@
         const table = document.getElementById('device-table');
         const icon = document.getElementById('table-toggle-icon');
         
-        if (table.style.display === 'none') {
+        if (table.style.display === 'none' || table.style.display === '') {
             table.style.display = 'block';
             icon.classList.remove('fa-chevron-down');
             icon.classList.add('fa-chevron-up');

@@ -1,38 +1,55 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\Role;
 use App\Models\Permission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
-class dashboardController extends Controller
+class DashboardController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+        public function index()
     {
-        $cameras = [
-            [
-                'name' => 'Kamera 1',
-                'ip' => '192.168.1.10',
-                'online' => true,
-                'stream_url' => 'http://localhost:7001/live/kamera1/index.m3u8'
-            ],
-            [
-                'name' => 'Kamera 2',
-                'ip' => '192.168.1.11',
-                'online' => false,
-                'stream_url' => 'http://localhost:7001/live/kamera2/index.m3u8'
-            ],
-            [
-                'name' => 'Kamera 3',
-                'ip' => '192.168.1.12',
-                'online' => false,
-                'stream_url' => 'http://localhost:7001/live/kamera3/index.m3u8'
-            ]
-        ];
+        $xmlPath = storage_path('app/cctv_devices.xml');
+
+        if (!file_exists($xmlPath)) {
+            abort(404, "File XML CCTV tidak ditemukan di: {$xmlPath}");
+        }
+
+        libxml_use_internal_errors(true);
+        $xml = simplexml_load_file($xmlPath);
+
+        if ($xml === false) {
+            $errs = libxml_get_errors();
+            $msg = collect($errs)->map(fn($e) => trim($e->message))->implode('; ');
+            abort(500, "Gagal parsing XML: {$msg}");
+        }
+
+        $cameras = [];
+        foreach ($xml->Device as $device) {
+            $attrs = $device->attributes();
+
+            $name     = (string) ($attrs['name'] ?? 'Unknown');
+            $ip       = (string) ($attrs['domain'] ?? $attrs['ip'] ?? '');
+            $port     = (string) ($attrs['port'] ?? '554');
+            $username = (string) ($attrs['username'] ?? '');
+            $password = (string) ($attrs['password'] ?? '');
+
+            $rtspUrl = "rtsp://{$username}:{$password}@{$ip}:{$port}/Streaming/Channels/101";
+
+            $slug = Str::slug($name ?: $ip ?: 'camera');
+
+            $cameras[] = [
+                'name'       => $name,
+                'ip'         => $ip,
+                'port'       => $port,
+                'username'   => $username,
+                'password'   => $password,
+                'rtsp_url'   => $rtspUrl,
+                'stream_url' => url("streams/{$slug}.m3u8"),
+                'online'     => false, 
+            ];
+        }
 
         return view('cctv.index', compact('cameras'));
     }
@@ -63,73 +80,21 @@ class dashboardController extends Controller
             ['name' => 'Admin', 'role' => 'Super Admin'],
             ['name' => 'Operator', 'role' => 'Viewer']
         ];
-
         $roles = Role::with('permissions')->get();
         $permissions = Permission::all();
 
-        return view('cctv.userMenu', compact('roles', 'permissions', 'users'));
+        return view('cctv.userMenu', compact('users', 'roles', 'permissions'));
     }
+    // public function accounts()
+    // {
 
-    public function store(Request $request)
-    {
-        $role = new Role();
-        $role->name = $request->name;
-        $role->permissions = $request->permissions ?? [];
-        $role->save();
+    //     return view('cctv.accounts');
+    // }
 
-        return redirect()->back()->with('success', 'Role berhasil dibuat!');
-    }
-
-    public function update(Request $request, $id)
-    {
-        $role = Role::findOrFail($id);
-        $role->name = $request->name;
-        $role->permissions = $request->permissions ?? [];
-        $role->save();
-
-        return redirect()->back()->with('success', 'Role berhasil diperbarui!');
-    }
-
-
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //http://localhost:5000/live/depan/index.m3u8
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-   
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+    public function create() {}
+    public function store(Request $request) {}
+    public function show(string $id) {}
+    public function edit(string $id) {}
+    public function update(Request $request, string $id) {}
+    public function destroy(string $id) {}
 }

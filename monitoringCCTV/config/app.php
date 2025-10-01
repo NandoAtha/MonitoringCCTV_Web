@@ -123,4 +123,7 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'View' => Illuminate\Support\Facades\View::class,
+    'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
+
 ];

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use MongoDB\Laravel\Eloquent\Model;
 use App\Models\Permission;
+use App\Models\RoleHasPermission;
 class Role extends Model
 {
     protected $connection = 'mongodb';
@@ -20,6 +21,18 @@ class Role extends Model
         return $this->belongsToMany(Permission::class, null, 'role_ids', 'permission_ids');
 
     }
+    
+
+    public function permissionsList()
+    {
+        $permissionIds = RoleHasPermissions::where('role_id', (string) $this->_id)
+                                        ->pluck('permission_id')
+                                        ->toArray();
+
+        return Permission::whereIn('_id', $permissionIds)->get();
+    }
+
+
 
     // public function permissions()
     // {

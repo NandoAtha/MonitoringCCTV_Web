@@ -51,13 +51,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($roles as $role)
+                            @foreach($roles as $role)
                                 <tr>
                                     <td>{{ $role->name }}</td>
                                     <td>
-                                        @foreach($role->permissions as $perm)
-                                        <span class="badge bg-success">{{ $perm->name }}</span>
-                                        @endforeach
+                                        @forelse($role->permissionsList() as $perm)
+                                            <span class="badge bg-info text-dark">{{ $perm->name }}</span>
+                                        @empty
+                                            <span class="text-muted">Tidak ada permission</span>
+                                        @endforelse
                                     </td>
                                     <td>
                                         {{-- Tombol Edit --}}
@@ -66,7 +68,7 @@
                                         </button>
 
                                         {{-- Tombol Delete --}}
-                                        <form action="{{ route('roles.update', $role->_id) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('roles.destroy', $role->_id) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus role ini?')">
@@ -81,8 +83,7 @@
                                     <div class="modal-dialog">
                                         <form action="{{ route('roles.update', $role->_id) }}" method="POST">
                                             @csrf
-                                            {{-- Jika pakai update dengan PUT --}}
-                                            @method('POST')
+                                            @method('POST') {{-- kalau update sebaiknya pakai PUT/PATCH --}}
                                             <div class="modal-content bg-dark text-white">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title" id="editRoleLabel{{ $role->_id }}">Edit Role</h5>
@@ -96,17 +97,17 @@
 
                                                     <div class="mb-3">
                                                         <label>Pilih Permission:</label><br>
-                                                        @php
-                                                            $rolePermissionIds = $role->permissions->pluck('_id')->toArray();
-                                                        @endphp
+                                                       @php
+                                                        $rolePermissionIds = $role->permissionsList()->pluck('_id')->toArray();
+                                                    @endphp
 
-                                                        @foreach($permissions as $permission)
+                                                    @foreach($permissions as $permission)
                                                         <label>
                                                             <input type="checkbox" name="permissions[]" value="{{ $permission->_id }}"
                                                                 {{ in_array($permission->_id, $rolePermissionIds) ? 'checked' : '' }}>
                                                             {{ $permission->name }}
                                                         </label><br>
-                                                        @endforeach
+                                                    @endforeach
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -116,8 +117,9 @@
                                         </form>
                                     </div>
                                 </div>
-                                @endforeach
-                            </tbody>
+                            @endforeach
+                        </tbody>
+
                         </table>
                     </div>
                 </div>
