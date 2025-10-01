@@ -52,31 +52,63 @@
         <img src="{{ asset('images/rb_3083.png') }}" alt="Logo" class="logo mx-auto d-block">
 
         <!-- Judul -->
-        <h3 class="mb-3">Login</h3>
+            <!-- Judul -->
+    <h3 class="mb-3">Login</h3>
 
-        <!-- Form -->
-        <form method="POST" action="/login">
-            @csrf
-            <div class="mb-3 text-start">
-                <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" required autofocus>
-            </div>
-            <div class="mb-3 text-start">
-                <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-            @if($errors->any())
-                <div class="alert alert-danger text-start">
-                    {{ $errors->first() }}
-                </div>
-            @endif
-            <button type="submit" class="btn btn-primary w-100">Login</button>
-        </form>
-
-        <!-- Footer kecil -->
-        <div class="footer-text">
-            © Diskominfo Kabupaten Malang 2025
+    <!-- Form -->
+    <form method="POST" action="/login" id="login-form">
+        @csrf
+        <div class="mb-3 text-start">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" required autofocus>
         </div>
+        <div class="mb-3 text-start">
+            <label class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+
+        @if($errors->any())
+            <div class="alert alert-danger text-start">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
+        <!-- Tombol Login -->
+        <button type="button" id="loginBtn" class="btn btn-primary w-100">Login</button>
+
+        <!-- Tempat render captcha (explicit) -->
+        <div id="captcha-container"></div>
+    </form>
+
+    <!-- reCAPTCHA explicit render -->
+    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
+
+    <script>
+        var captchaWidget;
+        function onloadCallback() {
+            // fungsi ini dipanggil setelah API reCAPTCHA siap
+        }
+
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            if (!captchaWidget) {
+                captchaWidget = grecaptcha.render('captcha-container', {
+                    'sitekey': '{{ env('NOCAPTCHA_SITEKEY') }}',
+                    'callback': function(response) {
+                        if(response) {
+                            document.getElementById("login-form").submit();
+                        }
+                    }
+                });
+            }
+            document.getElementById('captcha-container').style.display = 'block';
+        });
+    </script>
+
+    <!-- Footer kecil -->
+    <div class="footer-text">
+        © Diskominfo Kabupaten Malang 2025
     </div>
+</div>
+
 </body>
 </html>

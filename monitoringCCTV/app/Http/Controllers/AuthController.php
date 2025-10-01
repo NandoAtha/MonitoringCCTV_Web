@@ -16,12 +16,21 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+            'g-recaptcha-response' => 'required|captcha',
+        ], [
+            'g-recaptcha-response.required' => 'Silakan verifikasi captcha.',
+            'g-recaptcha-response.captcha'  => 'Captcha tidak valid, coba lagi.',
+        ]);
 
+
+        $credentials = $request->only('email', 'password');
         $user = User::where('email', $credentials['email'])->first();
 
-        if ($user && Hash::check($credentials['password'], $user->password)) {
-            Auth::login($user);
+        if ($user && \Hash::check($credentials['password'], $user->password)) {
+            \Auth::login($user);
             return redirect()->intended('dashboard');
         }
 
@@ -29,6 +38,7 @@ class AuthController extends Controller
             'email' => 'Email atau password salah.',
         ]);
     }
+
 
     public function logout()
     {
