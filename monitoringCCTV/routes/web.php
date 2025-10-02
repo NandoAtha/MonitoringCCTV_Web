@@ -9,9 +9,15 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-Route::get('/', function () {
-    return view('landing'); 
-});
+// routes/web.php
+
+use App\Http\Controllers\PublicController;
+// ...
+
+Route::get('/', [PublicController::class, 'index'])->name('landing');
+
+// ATAU jika URL publik Anda berbeda
+// Route::get('/monitoring', [PublicController::class, 'index'])->name('public.monitoring');
 
 Route::middleware('guest')->group(function () {
     // Rute Login

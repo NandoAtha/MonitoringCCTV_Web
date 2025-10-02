@@ -5,22 +5,22 @@
 @section('content')
 
 <div class="container-fluid">
-    
+
     <div class="row mb-4">
         <div class="col-12">
-             @php
-        $testCam = [
+            @php
+            $testCam = [
             'name' => 'Test Camera (M3U8 Demo)',
             'ip' => 'test-streams.mux.dev',
             'port' => '',
             'type' => 'Demo',
             'online' => true,
             'stream_url' => 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'
-        ];
+            ];
 
-        // Tambahkan testCam ke array cameras
-        $cameras[] = $testCam;
-    @endphp
+            // Tambahkan testCam ke array cameras
+            $cameras[] = $testCam;
+            @endphp
             <div class="control-panel bg-dark-subtle rounded-3 p-3 shadow-sm">
                 <div class="d-flex justify-content-between align-items-center flex-wrap">
                     <div class="d-flex align-items-center gap-3">
@@ -41,12 +41,12 @@
                     </div>
                     <div class="control-buttons d-flex align-items-center flex-wrap mt-2 mt-md-0">
                         <div id="camera-select-dropdown" class="me-3" style="display: none;">
-                            <select class="form-select form-select-sm bg-dark text-white border-secondary" 
-                                    onchange="selectSingleCamera(this.value)">
+                            <select class="form-select form-select-sm bg-dark text-white border-secondary"
+                                onchange="selectSingleCamera(this.value)">
                                 @foreach($cameras as $index => $cam)
-                                    <option value="{{ $index }}" class="bg-dark text-white">
-                                        {{ $cam['name'] }} @if($cam['online'] ?? false) (Online) @else (Offline) @endif
-                                    </option>
+                                <option value="{{ $index }}" class="bg-dark text-white">
+                                    {{ $cam['name'] }} @if($cam['online'] ?? false) (Online) @else (Offline) @endif
+                                </option>
                                 @endforeach
                             </select>
                         </div>
@@ -120,15 +120,15 @@
                                     </td>
                                     <td>
                                         @if($cam['online'] ?? false)
-                                            <span class="badge bg-success rounded-pill">
-                                                <i class="fas fa-circle me-1" style="font-size: 0.4rem;"></i>
-                                                Online
-                                            </span>
+                                        <span class="badge bg-success rounded-pill">
+                                            <i class="fas fa-circle me-1" style="font-size: 0.4rem;"></i>
+                                            Online
+                                        </span>
                                         @else
-                                            <span class="badge bg-danger rounded-pill">
-                                                <i class="fas fa-circle me-1" style="font-size: 0.4rem;"></i>
-                                                Offline
-                                            </span>
+                                        <span class="badge bg-danger rounded-pill">
+                                            <i class="fas fa-circle me-1" style="font-size: 0.4rem;"></i>
+                                            Offline
+                                        </span>
                                         @endif
                                     </td>
                                     <td class="text-center">
@@ -160,21 +160,21 @@
             </div>
         </div>
     </div>
-    
+
     <div class="row" id="video-grid">
         @php
         $testCam = [
-            'name' => 'Test Camera (M3U8 Demo)',
-            'ip' => 'test-streams.mux.dev',
-            'port' => '',
-            'type' => 'Demo',
-            'online' => true,
-            'stream_url' => 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'
+        'name' => 'Test Camera (M3U8 Demo)',
+        'ip' => 'test-streams.mux.dev',
+        'port' => '',
+        'type' => 'Demo',
+        'online' => true,
+        'stream_url' => 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'
         ];
 
         // Tambahkan testCam ke array cameras
         $cameras[] = $testCam;
-    @endphp
+        @endphp
         @foreach($cameras as $index => $cam)
         <div class="col-lg-3 col-md-6 mb-4 video-item" data-camera-index="{{ $index }}" data-online="{{ $cam['online'] ? 'true' : 'false' }}">
             <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100 bg-dark">
@@ -192,7 +192,9 @@
                                 <li><a class="dropdown-item text-light" href="#" onclick="playStream({{ $index }})"><i class="fas fa-play me-2 text-success"></i>Play</a></li>
                                 <li><a class="dropdown-item text-light" href="#" onclick="stopStream({{ $index }})"><i class="fas fa-stop me-2 text-warning"></i>Stop</a></li>
                                 <li><a class="dropdown-item text-light" href="#" onclick="fullscreenVideo({{ $index }})"><i class="fas fa-expand me-2 text-info"></i>Fullscreen</a></li>
-                                <li><hr class="dropdown-divider border-secondary"></li>
+                                <li>
+                                    <hr class="dropdown-divider border-secondary">
+                                </li>
                                 <li><a class="dropdown-item text-light" href="#" onclick="recordStream({{ $index }})"><i class="fas fa-record-vinyl me-2 text-danger"></i>Record</a></li>
                             </ul>
                         </div>
@@ -214,15 +216,15 @@
                         </div>
                         <div class="video-status position-absolute top-0 end-0 m-2">
                             @if($cam['online'] ?? false)
-                                <span class="badge bg-success rounded-pill">
-                                    <i class="fas fa-circle me-1" style="font-size: 0.4rem;"></i>
-                                    LIVE
-                                </span>
+                            <span class="badge bg-success rounded-pill">
+                                <i class="fas fa-circle me-1" style="font-size: 0.4rem;"></i>
+                                LIVE
+                            </span>
                             @else
-                                <span class="badge bg-danger rounded-pill">
-                                    <i class="fas fa-times me-1"></i>
-                                    OFFLINE
-                                </span>
+                            <span class="badge bg-danger rounded-pill">
+                                <i class="fas fa-times me-1"></i>
+                                OFFLINE
+                            </span>
                             @endif
                         </div>
                     </div>
@@ -297,7 +299,7 @@
     }
 
     .video-overlay {
-        background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.9) 100%);
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%);
         backdrop-filter: blur(5px);
     }
 
@@ -307,7 +309,7 @@
 
     .card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
     }
 
     .video-item .card {
@@ -321,7 +323,7 @@
         color: white;
     }
 
-    .table > :not(caption) > * > * {
+    .table> :not(caption)>*>* {
         padding: 12px;
     }
 
@@ -340,20 +342,20 @@
             margin-top: 1rem;
             width: 100%;
         }
-        
+
         .video-item {
             margin-bottom: 1rem;
         }
-        
+
         .nav-item {
             margin: 2px;
             padding: 12px 8px !important;
         }
-        
+
         .nav-item h6 {
             font-size: 0.8rem;
         }
-        
+
         .nav-item i {
             font-size: 1rem !important;
         }
@@ -366,7 +368,7 @@
     .dropdown-menu {
         background-color: #212529 !important;
         border: 1px solid #495057;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
         border-radius: 8px;
     }
 
@@ -390,7 +392,7 @@
     let selectedCameraIndex = 0; // Index kamera yang sedang tampil
     const videoItems = document.querySelectorAll('.video-item');
     const cameraSelectDropdown = document.getElementById('camera-select-dropdown');
-    
+
     // Inisialisasi: Pilih kamera pertama yang online atau kamera pertama
     const firstOnlineIndex = cameras.findIndex(cam => cam.online);
     selectedCameraIndex = firstOnlineIndex !== -1 ? firstOnlineIndex : 0;
@@ -401,9 +403,9 @@
         // Set dropdown value based on initial selectedCameraIndex
         const selectElement = cameraSelectDropdown.querySelector('select');
         if (selectElement) {
-             selectElement.value = selectedCameraIndex;
+            selectElement.value = selectedCameraIndex;
         }
-        
+
         // Auto-play the initial selected camera if in 1x1 mode (or all if in default 4-grid)
         changeLayout(null, 1);
     });
@@ -430,7 +432,7 @@
             showError(index, 'Stream URL not available');
             return;
         }
-        
+
         if (Hls.isSupported()) {
             const hls = new Hls({
                 lowLatencyMode: true,
@@ -477,7 +479,7 @@
             });
 
             hlsInstances[index] = hls;
-        
+
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = src;
             video.addEventListener('loadedmetadata', function() {
@@ -500,7 +502,7 @@
             video.pause();
             video.src = '';
         }
-        
+
         if (hlsInstances[index]) {
             hlsInstances[index].destroy();
             delete hlsInstances[index];
@@ -545,7 +547,7 @@
 
         selectedCameraIndex = index;
         updateVideoGridVisibility();
-        
+
         // Putar stream kamera yang baru dipilih jika online
         if (cameras[index].online && cameras[index].stream_url) {
             playStream(index);
@@ -561,7 +563,7 @@
             item.className = item.className.replace(/\bcol-lg-\d+\b/g, '').trim();
             item.classList.remove('col-md-6', 'd-none'); // Bersihkan d-none sebelum penentuan
 
-            switch(currentLayout) {
+            switch (currentLayout) {
                 case 1:
                     item.classList.add('col-lg-12', 'col-md-12');
                     if (isSelected) {
@@ -588,12 +590,12 @@
 
         currentLayout = layout;
         const buttons = document.querySelectorAll('.control-buttons .btn-group .btn');
-        
+
         buttons.forEach(btn => btn.classList.remove('btn-primary', 'active'));
         buttons.forEach(btn => btn.classList.add('btn-outline-light'));
-        
+
         // Tandai tombol layout yang aktif
-        if (event) { 
+        if (event) {
             const clickedButton = event.target.closest('button');
             clickedButton.classList.remove('btn-outline-light');
             clickedButton.classList.add('btn-primary', 'active');
@@ -605,24 +607,24 @@
                 defaultBtn.classList.add('btn-primary', 'active');
             }
         }
-        
+
         // Tampilkan/sembunyikan dropdown pemilihan kamera
         if (layout === 1) {
             cameraSelectDropdown.style.display = 'block';
-            
+
             // Putar stream kamera yang dipilih saat masuk mode 1x1
             if (cameras[selectedCameraIndex].online && cameras[selectedCameraIndex].stream_url) {
-                 playStream(selectedCameraIndex);
+                playStream(selectedCameraIndex);
             }
         } else {
             cameraSelectDropdown.style.display = 'none';
 
             // Putar semua stream kamera yang online saat masuk mode >1x1
             cameras.forEach((cam, i) => {
-                 if (cam.online && cam.stream_url) {
+                if (cam.online && cam.stream_url) {
                     // Stagger the connection
-                    setTimeout(() => playStream(i), i * 500); 
-                 }
+                    setTimeout(() => playStream(i), i * 500);
+                }
             });
         }
 
@@ -652,7 +654,7 @@
     function toggleDeviceTable() {
         const table = document.getElementById('device-table');
         const icon = document.getElementById('table-toggle-icon');
-        
+
         if (table.style.display === 'none' || table.style.display === '') {
             table.style.display = 'block';
             icon.classList.remove('fa-chevron-down');
