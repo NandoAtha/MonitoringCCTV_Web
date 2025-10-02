@@ -1,0 +1,15 @@
+#EXTM3U
+#EXT-X-VERSION:3
+#EXT-X-TARGETDURATION:5
+#EXT-X-MEDIA-SEQUENCE:785
+#EXTINF:5.000000,
+kominfo-lorong2785.ts
+#EXTINF:5.000000,
+kominfo-lorong2786.ts
+#EXTINF:5.000000,
+kominfo-lorong2787.ts
+#EXTINF:5.000000,
+kominfo-lorong2788.ts
+#EXTINF:4.350000,
+kominfo-lorong2789.ts
+#EXT-X-ENDLIST

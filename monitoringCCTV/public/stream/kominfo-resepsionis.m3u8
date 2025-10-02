@@ -1,0 +1,15 @@
+#EXTM3U
+#EXT-X-VERSION:3
+#EXT-X-TARGETDURATION:10
+#EXT-X-MEDIA-SEQUENCE:390
+#EXTINF:10.000000,
+kominfo-resepsionis390.ts
+#EXTINF:10.000000,
+kominfo-resepsionis391.ts
+#EXTINF:10.000000,
+kominfo-resepsionis392.ts
+#EXTINF:10.000000,
+kominfo-resepsionis393.ts
+#EXTINF:8.480000,
+kominfo-resepsionis394.ts
+#EXT-X-ENDLIST

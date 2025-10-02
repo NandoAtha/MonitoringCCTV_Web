@@ -55,19 +55,6 @@ class PublicController extends Controller
                     'image_placeholder' => asset('images/cctv_masuk_dummy.jpg')
                 ],
             ],
-            
-            // Tambahkan grup lain yang mungkin ada untuk konsistensi
-            'Lokasi Test Tambahan' => [ 
-                [
-                    'name' => 'Jalur Buntu',
-                    'ip' => '10.10.100.26',
-                    'port' => '554',
-                    'rtsp_url' => 'rtsp://KadisKominfo:MalangKab2811@10.10.100.26:554/cam/realmonitor?channel=5&subtype=0',
-                    'stream_url' => url('stream/kominfo-buntu.m3u8'),
-                    'online' => false, // Set false jika stream ini tidak dijalankan di FFmpeg
-                    'image_placeholder' => asset('images/cctv_buntu_dummy.jpg')
-                ],
-            ]
         ];
         // Melempar data kamera ke view 'landing'
         return view('landing', compact('cameras'));

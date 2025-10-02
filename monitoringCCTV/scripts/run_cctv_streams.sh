@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path Absolut ke direktori output HLS
-OUTPUT_DIR="/mnt/d/Documents/VScode/MonitoringCCTV_Web-1/monitoringCCTV/public/stream"
+OUTPUT_DIR="/mnt/d/Documents/VScode/MonitoringCCTV_Web/monitoringCCTV/public/stream"
 mkdir -p "$OUTPUT_DIR"
 
 # --- KAMERA 1: Resepsionis (Channel 1) ---
