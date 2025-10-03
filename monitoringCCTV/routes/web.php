@@ -32,6 +32,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/playback', [dashboardController::class, 'playback'])->name('playback');
     Route::get('/settings', [dashboardController::class, 'settings'])->name('settings');
     Route::get('/logs', [dashboardController::class, 'logs'])->name('logs');
+    Route::resource('cctv', DashboardController::class)->only([
+    'index', 'create', 'store'
+]);
 
     Route::get('/users', [dashboardController::class, 'users'])->name('users');
     Route::post('/roles', [dashboardController::class, 'store'])->name('roles.store');

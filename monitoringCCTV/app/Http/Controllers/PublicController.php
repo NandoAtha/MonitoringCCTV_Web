@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+// Gunakan DashboardController untuk mengakses data shared
+use App\Http\Controllers\DashboardController; 
+
 class PublicController extends Controller
 {
     /**
@@ -11,51 +14,13 @@ class PublicController extends Controller
      */
     public function index()
     {
-        // Mendefinisikan data kamera secara statis
-        $cameras = [
-            'Kominfo Kabupaten Malang' => [
-                [
-                    'name' => 'Resepsionis',
-                    'ip' => '10.10.100.26',
-                    'port' => '554',
-                    // PERBAIKAN SINTAKS: Menambahkan '&' sebelum subtype=0
-                    'rtsp_url' => 'rtsp://KadisKominfo:MalangKab2811@10.10.100.26:554/cam/realmonitor?channel=1&subtype=0',
-                    'stream_url' => url('stream/kominfo-resepsionis.m3u8'),
-                    'online' => true,
-                    'image_placeholder' => asset('images/cctv_lift_dummy.jpg')
-                ],
-                [
-                    'name' => 'PPID',
-                    'ip' => '10.10.100.26',
-                    'port' => '554',
-                    // PERBAIKAN SINTAKS
-                    'rtsp_url' => 'rtsp://KadisKominfo:MalangKab2811@10.10.100.26:554/cam/realmonitor?channel=2&subtype=0',
-                    'stream_url' => url('stream/kominfo-PPID.m3u8'),
-                    'online' => true,
-                    'image_placeholder' => asset('images/cctv_server_a_dummy.jpg')
-                ],
-                [
-                    'name' => 'Lorong 1',
-                    'ip' => '10.10.100.26',
-                    'port' => '554',
-                    // PERBAIKAN SINTAKS
-                    'rtsp_url' => 'rtsp://KadisKominfo:MalangKab2811@10.10.100.26:554/cam/realmonitor?channel=3&subtype=0',
-                    'stream_url' => url('stream/kominfo-lorong1.m3u8'),
-                    'online' => true,
-                    'image_placeholder' => asset('images/cctv_parkir_dummy.jpg')
-                ],
-                [
-                    'name' => 'Lorong 2',
-                    'ip' => '10.10.100.26',
-                    'port' => '554',
-                    // PERBAIKAN SINTAKS
-                    'rtsp_url' => 'rtsp://KadisKominfo:MalangKab2811@10.10.100.26:554/cam/realmonitor?channel=4&subtype=0',
-                    'stream_url' => url('stream/kominfo-lorong2.m3u8'),
-                    'online' => true,
-                    'image_placeholder' => asset('images/cctv_masuk_dummy.jpg')
-                ],
-            ],
-        ];
+        // Menggunakan method yang di-share dari DashboardController
+        $dashboardController = new DashboardController();
+        // Memanggil method yang sudah diubah menjadi protected
+        $cameras = (function() {
+            return $this->getPublicCCTVData();
+        })->call($dashboardController);
+
         // Melempar data kamera ke view 'landing'
         return view('landing', compact('cameras'));
     }

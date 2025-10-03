@@ -303,7 +303,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark transparent shadow-sm">
         <div class="justify-content-between flex-grow-1 d-flex align-items-center px-3">
             <a class="navbar-brand font-weight-bold d-flex align-items-center" href="#">
-                <img src="{{ asset('images/rb_3083.png') }}" alt="Logo" height="60" class="mr-2">
+                <!-- <img src="{{ asset('images/rb_3083.png') }}" alt="Logo" height="60" class="mr-2"> -->
                 <span class="text-left" style="line-height: 1;">
                     Kabupaten<br>Malang
                 </span>
@@ -319,7 +319,7 @@
     <div class="hero-section text-center">
         <div class="container">
             {{-- **Logo di Hero Section** --}}
-            <img src="{{ asset('images/logo-kominfo.png') }}" alt="Logo Kominfo" height="200" class="d-block mx-auto" style="filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));">
+            <img src="{{ asset('images/rb_3083.png') }}" alt="Logo Kominfo" height="250" class="d-block mx-auto" style="filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));">
             <h1 class="display-4 font-weight-bold mb-2 text-white">
                 Akses CCTV Online
             </h1>
@@ -428,9 +428,9 @@
 
             <div class="social-icons mb-3">
                 <a href="https://www.instagram.com/kominfokabmlg/" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="https://www.facebook.com/kominfokabmalang" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
-                <a href="https://x.com/kominfokabmlg" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
-                <a href="https://www.youtube.com/channel/UCPo6b6DOnJvve7ORpDUbkXA" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://x.com/kominfokabmlg" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.youtube.com/channel/UCPo6b6DOnJvve7ORpDUbkXA" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.facebook.com/kominfokabmalang" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
             </div>
 
             <p class="mb-0">Dinas Komunikasi dan Informatika Kabupaten Malang &copy; 2025</p>
