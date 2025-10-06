@@ -18,16 +18,21 @@
                         <div class="device-status" style="margin-left: 5px;">
                             <span class="badge bg-success rounded-pill px-3 py-2">
                                 <i class="fas fa-circle me-1" style="font-size: 0.5rem;"></i>
-                                All Devices: {{ count($cameras) }}
+                                All Devices: {{ $totalCameras }}
                             </span>
                             <span class="badge bg-primary rounded-pill px-3 py-2 ms-2">
                                 <i class="fas fa-circle me-1" style="font-size: 0.5rem;"></i>
-                                Online: {{ collect($cameras)->where('online', true)->count() }}
+                                Online: {{ $onlineCameras }}
                             </span>
+                            <span class="badge bg-danger rounded-pill px-3 py-2 ms-2">
+                                <i class="fas fa-circle me-1" style="font-size: 0.5rem;"></i>
+                                Offline: {{ $offlineCameras }}
+                            </span>
+
                         </div>
                     </div>
                     <div class="control-buttons d-flex align-items-center flex-wrap mt-2 mt-md-0">
-                        <a href="{{ route('cctv.create') }}" class="btn btn-success btn-sm me-2">
+                        <a href="{{ route('cctv.create') }}" class="btn btn-success btn-sm mr-2">
                             <i class="fas fa-plus me-1"></i>
                             Add New Camera
                         </a>
@@ -68,9 +73,8 @@
                                     <th class="text-light">Device Name</th>
                                     <th class="text-light">IP/Domain</th>
                                     <th class="text-light">Location</th>
-                                    <th class="text-light">Type</th>
                                     <th class="text-light">Status</th>
-                                    <th style="width: 150px;" class="text-center text-light">Actions</th>
+                                    <th style="width: 200px;" class="text-center text-light">Actions</th> {{-- Diperluas --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -85,11 +89,7 @@
                                     </td>
                                     <td class="text-light">{{ $cam['ip'] ?? '-' }}</td>
                                     <td class="text-light">{{ $cam['location'] ?? 'N/A' }}</td>
-                                    <td>
-                                        <span class="badge bg-info-subtle text-info rounded-pill">
-                                            {{ $cam['type'] ?? 'IP Camera' }}
-                                        </span>
-                                    </td>
+                                    
                                     <td>
                                         @if($cam['online'] ?? false)
                                         <span class="badge bg-success rounded-pill">
@@ -112,6 +112,19 @@
                                             <button class="btn btn-info" onclick="fullscreenVideo({{ $index }})" title="Fullscreen">
                                                 <i class="fas fa-expand"></i>
                                             </button>
+                                            
+                                            {{--  TOMBOL DELETE BARU --}}
+                                            
+                                            <button class="btn btn-danger delete-camera-btn" data-id="{{ $cam->id }}" title="Delete">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                            
+                                            {{-- Form tersembunyi untuk DELETE --}}
+                                            <form id="delete-form-{{ $cam->id }}" action="{{ route('cctv.destroy', $cam->id) }}" method="POST" style="display: none;">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
+
                                         </div>
                                     </td>
                                 </tr>
@@ -194,6 +207,8 @@
     // Initialize page
     document.addEventListener('DOMContentLoaded', () => {
         initializeLayout();
+        // 🔥 Tambahkan event listener untuk tombol hapus
+        attachDeleteEventListeners(); 
     });
 
     function initializeLayout() {
@@ -207,6 +222,20 @@
             if (cam.online && cam.stream_url) {
                 setTimeout(() => playStream(i), i * 500);
             }
+        });
+    }
+
+    // 🔥 FUNGSI BARU UNTUK MENGELOLA HAPUS KAMERA
+    function attachDeleteEventListeners() {
+        document.querySelectorAll('.delete-camera-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const cameraId = this.getAttribute('data-id');
+                const cameraName = this.closest('tr').querySelector('span').textContent;
+                
+                if (confirm(`Are you sure you want to delete camera: "${cameraName}"? This action cannot be undone.`)) {
+                    document.getElementById(`delete-form-${cameraId}`).submit();
+                }
+            });
         });
     }
 

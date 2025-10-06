@@ -153,7 +153,7 @@
                             @endcan
                         </div>
 
-                        <div class="nav-tab-col">
+                        <!-- <div class="nav-tab-col">
                             @can('playback_cctv')
                             <a href="{{ route('playback') }}" class="text-decoration-none d-block">
                                 <div class="nav-item p-3 {{ request()->routeIs('playback') ? 'active-tab' : '' }} d-flex flex-column align-items-center">
@@ -173,7 +173,7 @@
                                 </div>
                             </a>
                             @endcan
-                        </div>
+                        </div> -->
                         
                         <!-- <div class="nav-tab-col">
                             @can('view_logs')

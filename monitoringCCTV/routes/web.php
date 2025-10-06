@@ -33,8 +33,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings', [dashboardController::class, 'settings'])->name('settings');
     Route::get('/logs', [dashboardController::class, 'logs'])->name('logs');
     Route::resource('cctv', DashboardController::class)->only([
-    'index', 'create', 'store'
-]);
+        'index',
+        'create',
+        'store',
+    ]);
+    Route::delete('/cctv/{camera}', [DashboardController::class, 'destroy'])->name('cctv.destroy');
 
     Route::get('/users', [dashboardController::class, 'users'])->name('users');
     Route::post('/roles', [dashboardController::class, 'store'])->name('roles.store');
@@ -51,7 +54,4 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/accounts/store', [AccountController::class, 'store'])->name('accounts.store');
     Route::post('/accounts/update', [AccountController::class, 'update'])->name('accounts.update');
     Route::delete('/accounts/{id}', [AccountController::class, 'destroy'])->name('accounts.destroy');
-
-
-
 });

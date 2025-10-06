@@ -231,15 +231,23 @@
         .accordion-button:focus {
             background-color: var(--dark-card-bg);
             text-decoration: none;
-            box-shadow: 0 0 0 0.1rem var(--primary-color);
+            /* Hapus box-shadow agar tidak dobel border saat active/focus */
+            /* box-shadow: 0 0 0 0.1rem var(--primary-color); */ 
             border: 1px solid var(--primary-color) !important;
             border-radius: .25rem;
         }
 
-        .accordion-wrapper .card:first-child .accordion-button.active {
-            border-bottom: 1px solid var(--primary-color) !important;
-            border-radius: .25rem .25rem 0 0;
+        /* Perbaikan CSS untuk tombol active */
+        .accordion-wrapper .card .accordion-button.active {
+             border-radius: .25rem .25rem 0 0;
+             border-bottom: none !important;
         }
+        .accordion-wrapper .card .accordion-button.active.collapsed {
+            border-radius: .25rem;
+            border-bottom: 1px solid var(--primary-color) !important;
+        }
+        /* Akhir Perbaikan CSS */
+
 
         .accordion-wrapper .card-body {
             background-color: var(--dark-card-bg);
@@ -303,7 +311,6 @@
     <nav class="navbar navbar-expand-lg navbar-dark transparent shadow-sm">
         <div class="justify-content-between flex-grow-1 d-flex align-items-center px-3">
             <a class="navbar-brand font-weight-bold d-flex align-items-center" href="#">
-                <!-- <img src="{{ asset('images/rb_3083.png') }}" alt="Logo" height="60" class="mr-2"> -->
                 <span class="text-left" style="line-height: 1;">
                     Kabupaten<br>Malang
                 </span>
@@ -319,7 +326,7 @@
     <div class="hero-section text-center">
         <div class="container">
             {{-- **Logo di Hero Section** --}}
-            <img src="{{ asset('images/rb_3083.png') }}" alt="Logo Kominfo" height="250" class="d-block mx-auto" style="filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));">
+            <img src="{{ asset('images/logo_cctv.png') }}" alt="Logo Kominfo" height="250" class="d-block mx-auto" style="filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));">
             <h1 class="display-4 font-weight-bold mb-2 text-white">
                 Akses CCTV Online
             </h1>
@@ -339,16 +346,26 @@
 
         <div id="cctv-accordion" class="accordion-wrapper">
 
+            {{-- 🔥 PERBAIKAN DI SINI: Menggunakan $loop->index untuk ID yang unik --}}
             @foreach($cameras as $locationName => $camerasInLocation)
+            @php
+                // Buat slug dan tambahkan index untuk memastikan ID sangat unik
+                $uniqueSlug = \Illuminate\Support\Str::slug($locationName) . '-' . $loop->index;
+            @endphp
             <div class="card">
-                <div class="card-header" id="heading-{{ \Illuminate\Support\Str::slug($locationName) }}">
-                    <button class="accordion-button collapsed" data-toggle="collapse" data-target="#collapse-{{ \Illuminate\Support\Str::slug($locationName) }}" aria-expanded="false" aria-controls="collapse-{{ \Illuminate\Support\Str::slug($locationName) }}">
+                <div class="card-header" id="heading-{{ $uniqueSlug }}">
+                    <button class="accordion-button collapsed" data-toggle="collapse" 
+                            data-target="#collapse-{{ $uniqueSlug }}" 
+                            aria-expanded="false" 
+                            aria-controls="collapse-{{ $uniqueSlug }}">
                         {{ $locationName }}
                         <i class="fas fa-chevron-down"></i>
                     </button>
                 </div>
 
-                <div id="collapse-{{ \Illuminate\Support\Str::slug($locationName) }}" class="collapse" aria-labelledby="heading-{{ \Illuminate\Support\Str::slug($locationName) }}" data-parent="#cctv-accordion">
+                <div id="collapse-{{ $uniqueSlug }}" class="collapse" 
+                     aria-labelledby="heading-{{ $uniqueSlug }}" 
+                     data-parent="#cctv-accordion">
                     <div class="card-body">
                         <div class="row">
                             @foreach($camerasInLocation as $camera)
@@ -376,7 +393,7 @@
                                         <i class="fas fa-video-slash fa-4x text-danger mb-3"></i>
                                         <h6 class="text-white">Kamera Offline / Tidak Tersedia</h6>
                                         {{-- Tampilkan placeholder jika ada --}}
-                                        @if($camera['image_placeholder'])
+                                        @if(isset($camera['image_placeholder']))
                                         <div class="position-absolute top-0 start-0 w-100 h-100" style="background-image: url('{{ $camera['image_placeholder'] }}'); background-size: cover; background-position: center; opacity: 0.2;"></div>
                                         @endif
                                     </div>
@@ -475,24 +492,63 @@
                 }
             });
 
-            // 4. Panggil logic scroll saat dokumen dimuat (untuk kasus reload di tengah halaman)
+            // Panggil logic scroll saat dokumen dimuat (untuk kasus reload di tengah halaman)
             toggleNavbar();
+            
+            // 🔥 Inisialisasi event accordion setelah dokumen siap
+            initAccordionEvents();
         });
 
-        $('.accordion-button').on('click', function() {
-            var $button = $(this);
-            var target = $button.data('target');
+        function initAccordionEvents() {
+            // Gunakan event Bootstrap untuk mengelola kelas 'active' dan video load
+            $('#cctv-accordion').on('show.bs.collapse', function (e) {
+                // Hapus kelas 'active' dari semua tombol
+                $('.accordion-button').removeClass('active');
+                
+                // Tambahkan kelas 'active' ke tombol yang baru dibuka
+                $(e.target).prev('.card-header').find('.accordion-button').addClass('active');
+                
+                // Pastikan video di dalam collapse yang BARU DIBUKA tetap dalam status paused/stopLoad
+                $(e.target).find('.video-container').each(function() {
+                    const container = $(this);
+                    const $video = container.find('video');
+                    const videoElement = $video.get(0);
+                    const videoId = videoElement.id;
+                    const hlsInstance = hlsInstances[videoId];
+                    
+                    // Pastikan visual paused (default) dan HLS stopLoad
+                    container.addClass("paused");
+                    videoElement.pause();
+                    if (hlsInstance) hlsInstance.stopLoad();
+                });
+            });
 
-            // Hapus kelas 'active' dari semua tombol
-            $('.accordion-button').not($button).removeClass('active');
+            $('#cctv-accordion').on('hide.bs.collapse', function (e) {
+                // Hapus kelas 'active' dari tombol yang ditutup
+                $(e.target).prev('.card-header').find('.accordion-button').removeClass('active');
 
-            // Toggle manual class 'active'
-            if ($button.hasClass('collapsed')) {
-                $button.addClass('active');
-            } else {
-                $button.removeClass('active');
-            }
-        });
+                // Logic PENTING: Pause semua video di dalam accordion yang DITUTUP
+                $(e.target).find('.video-container').each(function() {
+                    const container = $(this);
+                    if (!container.hasClass('paused')) {
+                        const $video = container.find('video');
+                        const videoElement = $video.get(0);
+                        const videoId = videoElement.id;
+                        const hlsInstance = hlsInstances[videoId];
+                        
+                        // Pause video dan stop HLS load
+                        container.addClass("paused");
+                        videoElement.pause();
+                        if (hlsInstance) hlsInstance.stopLoad();
+                    }
+                });
+            });
+            
+             // Atur ulang tombol yang aktif jika halaman di-refresh saat terbuka
+            $('#cctv-accordion .collapse.show').each(function() {
+                $(this).prev('.card-header').find('.accordion-button').addClass('active');
+            });
+        }
 
         $(".video-container").on("click", function() {
             const container = $(this);

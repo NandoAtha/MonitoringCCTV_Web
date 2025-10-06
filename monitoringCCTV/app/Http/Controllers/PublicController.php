@@ -5,25 +5,23 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 // Gunakan DashboardController untuk mengakses data shared
-use App\Http\Controllers\DashboardController; 
+use App\Http\Controllers\DashboardController;
+use App\Models\Camera;
 
 class PublicController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+   public function index()
     {
-        // Menggunakan method yang di-share dari DashboardController
-        $dashboardController = new DashboardController();
-        // Memanggil method yang sudah diubah menjadi protected
-        $cameras = (function() {
-            return $this->getPublicCCTVData();
-        })->call($dashboardController);
+        $cameras = Camera::orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy('location'); //  dikelompokkan per lokasi
 
-        // Melempar data kamera ke view 'landing'
         return view('landing', compact('cameras'));
     }
+
 
     /**
      * Show the form for creating a new resource.
