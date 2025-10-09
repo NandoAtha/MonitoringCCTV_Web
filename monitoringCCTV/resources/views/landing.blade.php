@@ -138,6 +138,27 @@
             margin-bottom: 10px;
         }
 
+        .live-btn {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            color: #fff;
+            background: rgba(220, 53, 69, 0.9); /* warna merah */
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            z-index: 20;
+            font-size: 0.9rem;
+            font-weight: 600;
+            line-height: 1;
+            transition: background-color 0.2s;
+        }
+
+        .live-btn:hover {
+            background: rgba(220, 53, 69, 1);
+        }
+
 
         .card-feature {
             background-color: var(--dark-card-bg);
@@ -385,6 +406,10 @@
 
                                     <button class="fullscreen-btn" data-target-video="video-{{ \Illuminate\Support\Str::slug($camera['name']) }}">
                                         <i class="fas fa-expand"></i>
+                                    </button>
+
+                                    <button class="live-btn" data-target-video="video-{{ \Illuminate\Support\Str::slug($camera['name']) }}">
+                                        <i class="fas fa-broadcast-tower"></i> Live
                                     </button>
 
                                     @else
@@ -656,8 +681,39 @@
             }
         }
 
+        // Tombol "Live" untuk reload stream agar kembali ke segmen terbaru
+        $('.live-btn').on('click', function(e) {
+            e.stopPropagation();
+
+            const targetVideoId = $(this).data('target-video');
+            const videoElement = document.getElementById(targetVideoId);
+            const hlsInstance = hlsInstances[targetVideoId];
+            const container = $(videoElement).closest('.video-container');
+
+            if (hlsInstance) {
+                // Ambil ulang stream dengan query anti-cache
+                const originalUrl = $(videoElement).attr('data-hls-url');
+                const newUrl = originalUrl + '?_=' + Date.now();
+
+                console.log(`Reloading live stream for ${targetVideoId}...`);
+                hlsInstance.loadSource(newUrl);
+                hlsInstance.attachMedia(videoElement);
+                hlsInstance.startLoad();
+
+                // Jika video sedang di-pause, auto-play kembali
+                container.removeClass('paused');
+                videoElement.muted = true;
+                videoElement.play().catch(err => console.warn("Gagal play ulang:", err));
+
+            
+            }
+        });
+
+
         // Panggil setiap kali pengguna scroll
         $(window).on('scroll', toggleNavbar);
+
+
     </script>
 
 </body>

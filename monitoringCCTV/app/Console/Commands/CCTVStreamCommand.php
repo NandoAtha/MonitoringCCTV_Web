@@ -12,7 +12,7 @@ class CCTVStreamCommand extends Command
     protected $signature = 'cctv:stream';
     protected $description = 'Menjalankan stream CCTV dinamis berdasarkan database';
 
-    protected $outputDir = 'public/stream';
+    protected $outputDir = 'public/streams';
     protected $processes = [];
 
     public function handle()
@@ -21,7 +21,7 @@ class CCTVStreamCommand extends Command
         $this->initOutputDir();
 
         while (true) {
-            $cameras = Camera::where('is_active', true)->get();
+            $cameras = Camera::where('online', true)->get();
 
             // Jalankan stream baru
             foreach ($cameras as $camera) {
@@ -43,17 +43,17 @@ class CCTVStreamCommand extends Command
 
     protected function initOutputDir()
     {
-        if (!File::exists(public_path('stream'))) {
-            File::makeDirectory(public_path('stream'), 0755, true);
+        if (!File::exists(public_path('streams'))) {
+            File::makeDirectory(public_path('streams'), 0755, true);
         }
     }
 
     protected function startStream($camera)
     {
-        $outputPath = public_path("stream/{$camera->name}.m3u8");
+        $outputPath = public_path("streams/{$camera->name}.m3u8");
 
         $cmd = [
-            'ffmpeg',
+            'C:\ffmpeg\bin\ffmpeg.exe',
             '-rtsp_transport', 'tcp',
             '-i', $camera->rtsp_url,
             '-codec:v', 'libx264',
@@ -61,18 +61,24 @@ class CCTVStreamCommand extends Command
             '-crf', '23',
             '-sc_threshold', '0',
             '-f', 'hls',
-            '-hls_time', '5',
-            '-hls_list_size', '5',
+            '-hls_time', '2',
+            '-hls_list_size', '3',
             '-hls_flags', 'delete_segments',
             $outputPath,
         ];
 
+        // Simpan log ffmpeg agar bisa dicek
+        $logFile = storage_path("logs/ffmpeg_{$camera->id}.log");
         $process = new Process($cmd);
-        $process->start();
+        $process->setTimeout(0); // biar tidak auto stop
+        $process->start(function ($type, $buffer) use ($logFile) {
+            File::append($logFile, $buffer);
+        });
 
         $this->processes[$camera->id] = $process;
-        $this->info("Stream dimulai: {$camera->name}");
+        $this->info("Stream dimulai: {$camera->name} → {$outputPath}");
     }
+
 
     protected function stopStream($id)
     {

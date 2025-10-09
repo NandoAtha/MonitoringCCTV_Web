@@ -91,23 +91,49 @@ class DashboardController extends Controller
             'name'       => 'required|string|max:255',
             'ip'         => 'required|ip',
             'port'       => 'nullable|numeric|min:1|max:65535',
-            'rtsp_url'   => 'required|string',
-            'stream_url' => 'required|string',
+            'username'   => 'required|string', // NEW: Username
+            'password'   => 'required|string', // NEW: Password
+            'channel'    => 'required|numeric', // NEW: Channel/Stream Path
             'online'     => 'nullable|boolean',
             'type'       => 'nullable|string|max:100',
             'location'   => 'required|string|max:255',
+            // 'rtsp_url' dan 'stream_url' dihapus dari validasi karena di-generate
         ]);
+
+        // --- LOGIKA GENERASI URL ---
+
+        // 1. Buat RTSP URL dari input yang divalidasi
+        $ip = $validated['ip'];
+        $port = $validated['port'] ?? '554';
+        $username = $validated['username'];
+        $password = $validated['password'];
+        $channel = $validated['channel'];
+
+        // Format RTSP: rtsp://user:pass@ip:port/channel
+        $rtspUrl = "rtsp://{$username}:{$password}@{$ip}:{$port}/cam/realmonitor?channel={$channel}&subtype=1";
+
+        // 2. Buat Stream URL (HLS) dari nama kamera
+        $cameraName = $validated['name'];
+        $streamUrl = 'streams/' . $cameraName . '.m3u8';
+
+        // --- AKHIR LOGIKA GENERASI URL ---
 
         Camera::create([
             'name'       => $validated['name'],
             'ip'         => $validated['ip'],
-            'port'       => $validated['port'] ?? '554',
-            'rtsp_url'   => $validated['rtsp_url'],
-            'stream_url' => $validated['stream_url'],
+            'port'       => $port,
+            // Simpan RTSP URL yang sudah di-generate
+            'rtsp_url'   => $rtspUrl,
+            // Simpan Stream URL yang sudah di-generate
+            'stream_url' => $streamUrl,
             // ✅ gunakan has() agar checkbox unchecked tidak error
             'online'     => $request->has('online'),
             'type'       => $validated['type'] ?? 'IP Camera',
             'location'   => $validated['location'],
+
+            // Simpan username dan password secara terpisah (opsional, tergantung skema DB Anda)
+            // 'username' => $username, 
+            // 'password' => $password, 
         ]);
 
         return redirect()
@@ -147,7 +173,7 @@ class DashboardController extends Controller
     {
         // Panggil method delete() pada model Camera
         $camera->delete();
-        
+
         return redirect()
             ->route('cctv.index')
             ->with('success', 'Kamera berhasil dihapus!');

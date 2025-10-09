@@ -48,7 +48,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label for="ip" class="form-label text-white">IP Address</label>
                                     <input type="text" class="form-control bg-dark text-white border-secondary @error('ip') is-invalid @enderror"
                                         id="ip" name="ip" value="{{ old('ip') }}" placeholder="192.168.1.100" required>
@@ -56,7 +56,7 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label for="port" class="form-label text-white">Port (Default: 554)</label>
                                     <input type="number" class="form-control bg-dark text-white border-secondary @error('port') is-invalid @enderror"
                                         id="port" name="port" value="{{ old('port') ?? 554 }}">
@@ -64,26 +64,37 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="channel" class="form-label text-white">Channel</label>
+                                    <input type="number" class="form-control bg-dark text-white border-secondary @error('channel') is-invalid @enderror"
+                                        id="channel" name="channel" value="{{ old('channel') }}" placeholder="Contoh: 1 atau 2">
+                                    @error('channel')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="username" class="form-label text-white">Username RTSP</label>
+                                    <input type="text" class="form-control bg-dark text-white border-secondary @error('username') is-invalid @enderror"
+                                        id="username" name="username" value="{{ old('username') }}" placeholder="user_rtsp" required>
+                                    @error('username')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="password" class="form-label text-white">Password RTSP</label>
+                                    <input type="password" class="form-control bg-dark text-white border-secondary @error('password') is-invalid @enderror"
+                                        id="password" name="password" value="{{ old('password') }}" placeholder="password_rtsp" required>
+                                    @error('password')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="rtsp_url" class="form-label text-white">RTSP URL</label>
-                                <input type="url" class="form-control bg-dark text-white border-secondary @error('rtsp_url') is-invalid @enderror"
-                                    id="rtsp_url" name="rtsp_url" value="{{ old('rtsp_url') }}" placeholder="rtsp://user:pass@ip:port/stream" required>
-                                @error('rtsp_url')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="stream_url" class="form-label text-white">Stream URL (HLS - .m3u8)</label>
-                                <input type="text" class="form-control bg-dark text-white border-secondary @error('stream_url') is-invalid @enderror"
-                                    id="stream_url" name="stream_url" value="{{ old('stream_url') }}" placeholder="{{ url('stream/new-camera.m3u8') }}" required>
-                                @error('stream_url')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
+                            {{-- Field stream_url dihilangkan karena di-generate di controller --}}
+                            
                             <div class="col-md-6 mb-3 d-flex align-items-center">
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="online" name="online" value="1" checked>

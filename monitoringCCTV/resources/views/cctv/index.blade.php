@@ -266,12 +266,16 @@
         if (Hls.isSupported()) {
             const hls = new Hls({
                 lowLatencyMode: true,
-                backBufferLength: 90,
-                maxBufferLength: 30,
-                maxMaxBufferLength: 600,
-                maxBufferSize: 60 * 1000 * 1000,
-                maxBufferHole: 0.5
+                liveSyncDuration: 1,
+                liveMaxLatencyDuration: 3,
+                liveDurationInfinity: true,
+                manifestLoadingTimeOut: 15000,
+                manifestLoadingMaxRetry: 10,
+                manifestLoadingRetryDelay: 1000,
+                maxLiveSyncPlaybackRate: 1.5,
+                enableWorker: true
             });
+
 
             hls.loadSource(src);
             hls.attachMedia(video);
