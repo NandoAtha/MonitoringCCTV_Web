@@ -332,6 +332,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark transparent shadow-sm">
         <div class="justify-content-between flex-grow-1 d-flex align-items-center px-3">
             <a class="navbar-brand font-weight-bold d-flex align-items-center" href="#">
+                <img src="{{ asset('images/Logo_Kabupaten_Malang.svg') }}" alt="Logo Kabupaten Malang" height="40" class="mr-2">
                 <span class="text-left" style="line-height: 1;">
                     Kabupaten<br>Malang
                 </span>
