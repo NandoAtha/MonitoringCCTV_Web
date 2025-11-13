@@ -9,9 +9,15 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-Route::get('/', function () {
-    return view('landing'); 
-});
+// routes/web.php
+
+use App\Http\Controllers\PublicController;
+// ...
+
+Route::get('/', [PublicController::class, 'index'])->name('landing');
+
+// ATAU jika URL publik Anda berbeda
+// Route::get('/monitoring', [PublicController::class, 'index'])->name('public.monitoring');
 
 Route::middleware('guest')->group(function () {
     // Rute Login
@@ -26,6 +32,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/playback', [dashboardController::class, 'playback'])->name('playback');
     Route::get('/settings', [dashboardController::class, 'settings'])->name('settings');
     Route::get('/logs', [dashboardController::class, 'logs'])->name('logs');
+    Route::resource('cctv', DashboardController::class)->only([
+        'index',
+        'create',
+        'store',
+    ]);
+    Route::delete('/cctv/{camera}', [DashboardController::class, 'destroy'])->name('cctv.destroy');
 
     Route::get('/users', [dashboardController::class, 'users'])->name('users');
     Route::post('/roles', [dashboardController::class, 'store'])->name('roles.store');
@@ -42,7 +54,4 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/accounts/store', [AccountController::class, 'store'])->name('accounts.store');
     Route::post('/accounts/update', [AccountController::class, 'update'])->name('accounts.update');
     Route::delete('/accounts/{id}', [AccountController::class, 'destroy'])->name('accounts.destroy');
-
-
-
 });

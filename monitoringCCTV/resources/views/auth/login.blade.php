@@ -86,13 +86,12 @@
     <script>
         var captchaWidget;
         function onloadCallback() {
-            // fungsi ini dipanggil setelah API reCAPTCHA siap
         }
 
         document.getElementById('loginBtn').addEventListener('click', function() {
             if (!captchaWidget) {
                 captchaWidget = grecaptcha.render('captcha-container', {
-                    'sitekey': '{{ env('NOCAPTCHA_SITEKEY') }}',
+                    'sitekey': "{{ env('NOCAPTCHA_SITEKEY') }}",
                     'callback': function(response) {
                         if(response) {
                             document.getElementById("login-form").submit();

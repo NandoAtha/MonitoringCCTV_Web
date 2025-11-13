@@ -1,58 +1,46 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Role;
 use App\Models\Permission;
+use App\Models\Camera;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 {
-        public function index()
+    /**
+     * Menampilkan semua kamera dari database.
+     */
+    public function index()
     {
-        $xmlPath = storage_path('app/cctv_devices.xml');
+        try {
+            // Ambil semua kamera dari database
+            $cameras = Camera::orderBy('created_at', 'desc')->get();
 
-        if (!file_exists($xmlPath)) {
-            abort(404, "File XML CCTV tidak ditemukan di: {$xmlPath}");
+            // Hitung statistik
+            $totalCameras = $cameras->count();
+            $onlineCameras = $cameras->where('online', true)->count();
+            $offlineCameras = $totalCameras - $onlineCameras;
+
+            // Jika belum ada kamera
+            if ($totalCameras === 0) {
+                session()->flash('warning', 'Belum ada kamera yang terdaftar. Tambahkan kamera terlebih dahulu.');
+            }
+
+            return view('cctv.index', compact(
+                'cameras',
+                'totalCameras',
+                'onlineCameras',
+                'offlineCameras'
+            ));
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal memuat data kamera: ' . $e->getMessage());
         }
-
-        libxml_use_internal_errors(true);
-        $xml = simplexml_load_file($xmlPath);
-
-        if ($xml === false) {
-            $errs = libxml_get_errors();
-            $msg = collect($errs)->map(fn($e) => trim($e->message))->implode('; ');
-            abort(500, "Gagal parsing XML: {$msg}");
-        }
-
-        $cameras = [];
-        foreach ($xml->Device as $device) {
-            $attrs = $device->attributes();
-
-            $name     = (string) ($attrs['name'] ?? 'Unknown');
-            $ip       = (string) ($attrs['domain'] ?? $attrs['ip'] ?? '');
-            $port     = (string) ($attrs['port'] ?? '554');
-            $username = (string) ($attrs['username'] ?? '');
-            $password = (string) ($attrs['password'] ?? '');
-
-            $rtspUrl = "rtsp://{$username}:{$password}@{$ip}:{$port}/Streaming/Channels/101";
-
-            $slug = Str::slug($name ?: $ip ?: 'camera');
-
-            $cameras[] = [
-                'name'       => $name,
-                'ip'         => $ip,
-                'port'       => $port,
-                'username'   => $username,
-                'password'   => $password,
-                'rtsp_url'   => $rtspUrl,
-                'stream_url' => url("streams/{$slug}.m3u8"),
-                'online'     => false, 
-            ];
-        }
-
-        return view('cctv.index', compact('cameras'));
     }
+
 
     public function playback()
     {
@@ -85,16 +73,109 @@ class DashboardController extends Controller
 
         return view('cctv.userMenu', compact('users', 'roles', 'permissions'));
     }
-    // public function accounts()
-    // {
 
-    //     return view('cctv.accounts');
-    // }
+    /**
+     * Form tambah kamera baru
+     */
+    public function create()
+    {
+        return view('cctv.create');
+    }
 
-    public function create() {}
-    public function store(Request $request) {}
-    public function show(string $id) {}
-    public function edit(string $id) {}
-    public function update(Request $request, string $id) {}
-    public function destroy(string $id) {}
+    /**
+     * Simpan kamera baru ke database
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name'       => 'required|string|max:255',
+            'ip'         => 'required|ip',
+            'port'       => 'nullable|numeric|min:1|max:65535',
+            'username'   => 'required|string', // NEW: Username
+            'password'   => 'required|string', // NEW: Password
+            'channel'    => 'required|numeric', // NEW: Channel/Stream Path
+            'online'     => 'nullable|boolean',
+            'type'       => 'nullable|string|max:100',
+            'location'   => 'required|string|max:255',
+            // 'rtsp_url' dan 'stream_url' dihapus dari validasi karena di-generate
+        ]);
+
+        // --- LOGIKA GENERASI URL ---
+
+        // 1. Buat RTSP URL dari input yang divalidasi
+        $ip = $validated['ip'];
+        $port = $validated['port'] ?? '554';
+        $username = $validated['username'];
+        $password = $validated['password'];
+        $channel = $validated['channel'];
+
+        // Format RTSP: rtsp://user:pass@ip:port/channel
+        $rtspUrl = "rtsp://{$username}:{$password}@{$ip}:{$port}/cam/realmonitor?channel={$channel}&subtype=1";
+
+        // 2. Buat Stream URL (HLS) dari nama kamera
+        $cameraName = $validated['name'];
+        $streamUrl = 'streams/' . $cameraName . '.m3u8';
+
+        // --- AKHIR LOGIKA GENERASI URL ---
+
+        Camera::create([
+            'name'       => $validated['name'],
+            'ip'         => $validated['ip'],
+            'port'       => $port,
+            // Simpan RTSP URL yang sudah di-generate
+            'rtsp_url'   => $rtspUrl,
+            // Simpan Stream URL yang sudah di-generate
+            'stream_url' => $streamUrl,
+            // ✅ gunakan has() agar checkbox unchecked tidak error
+            'online'     => $request->has('online'),
+            'type'       => $validated['type'] ?? 'IP Camera',
+            'location'   => $validated['location'],
+
+            // Simpan username dan password secara terpisah (opsional, tergantung skema DB Anda)
+            // 'username' => $username, 
+            // 'password' => $password, 
+        ]);
+
+        return redirect()
+            ->route('cctv.index')
+            ->with('success', 'Kamera baru berhasil ditambahkan!');
+    }
+
+
+    public function show(Camera $camera)
+    {
+        return view('cctv.show', compact('camera'));
+    }
+
+    public function edit(Camera $camera)
+    {
+        return view('cctv.edit', compact('camera'));
+    }
+
+    public function update(Request $request, Camera $camera)
+    {
+        $validatedData = $request->validate([
+            'name'       => 'required|string|max:255',
+            'ip'         => 'required|ip',
+            'port'       => 'nullable|numeric|min:1|max:65535',
+            'rtsp_url'   => 'required|string',
+            'stream_url' => 'required|string',
+            'online'     => 'boolean',
+            'type'       => 'nullable|string|max:100',
+            'location'   => 'required|string|max:255',
+        ]);
+
+        $camera->update($validatedData);
+        return redirect()->route('cctv.index')->with('success', 'Kamera berhasil diperbarui!');
+    }
+
+    public function destroy(Camera $camera)
+    {
+        // Panggil method delete() pada model Camera
+        $camera->delete();
+
+        return redirect()
+            ->route('cctv.index')
+            ->with('success', 'Kamera berhasil dihapus!');
+    }
 }
